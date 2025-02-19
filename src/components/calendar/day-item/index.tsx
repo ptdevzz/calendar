@@ -8,13 +8,13 @@ interface DayItemProps {
 }
 
 
-const EventItem = () => {
+const Event = () => {
     const statusClass = {
         confirmed: 'bg-light-orange text-light-blue before:bg-dark-blue',
         pending: 'bg-dark-orange text-dark-blue before:bg-light-blue',
-        cancel: 'bg-dark-blue text-light-blue before:bg-dark-orange'
+        cancel: 'bg-dark-blue text-gray-300 before:bg-dark-orange'
     }
-    return <div className={`mb-1 p-1 pl-2 py-[6px] rounded-md relative before:absolute before:w-1 before:h-full before:top-0 before:left-0 overflow-hidden ${statusClass['pending']}`}>
+    return <div className={`mb-1 p-1 pl-2 py-[6px] rounded-md relative before:absolute before:w-1 before:h-full before:top-0 before:left-0 overflow-hidden ${statusClass['cancel']}`}>
         <p className="text-xs line-clamp-1">First session with asdsad ad asd</p>
     </div>
 }
@@ -32,9 +32,9 @@ const DayItem = ({ item, rowIndex }: DayItemProps) => {
       [&::-webkit-scrollbar-track]:bg-gray-100
       [&::-webkit-scrollbar-thumb]:bg-dark-blue"
         >
-            <EventItem />
-            <EventItem />
-           
+            <Event />
+            <Event />
+
         </div>
     </div>
 }
