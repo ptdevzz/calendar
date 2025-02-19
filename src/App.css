@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+* {
+  font-family: "Roboto", serif;
+}
+
+
+.select-custom {
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/96/Chevron-icon-drop-down-menu-WHITE.png');
+    background-size: 0.7rem;
+    background-position: right 1rem center;
+}

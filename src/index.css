@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+
+
+@theme {
+  --color-light-blue: #5684AE;
+  --color-dark-blue: #0F4C81;
+  --color-light-orange: #FFE4C8;
+  --color-dark-orange: #F9BE81;
+  --color-calendar-title: #E4F6ED;
+  --color-dark-calendar-title: #7A7F7E;
+}
