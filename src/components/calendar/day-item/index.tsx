@@ -32,9 +32,7 @@ const DayItem = ({ item, rowIndex }: DayItemProps) => {
       [&::-webkit-scrollbar-track]:bg-gray-100
       [&::-webkit-scrollbar-thumb]:bg-dark-blue"
         >
-            <Event />
-            <Event />
-
+            {item.day === 6 && <Event />}
         </div>
     </div>
 }
