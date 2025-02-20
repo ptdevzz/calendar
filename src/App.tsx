@@ -8,10 +8,22 @@ import data from './data/event.json'
 import { CalendarDay, EventModel } from './models/event'
 import Event from './components/event'
 import { useForm } from 'react-hook-form'
-import { RRule } from 'rrule'
-import dayjs from 'dayjs'
 import { EventDay } from './components/event-day'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { Options, RRule } from 'rrule'
+
+dayjs.extend(customParseFormat)
 function App() {
+  const [currentDate, setCurrentDate] = useState<{
+    month: number
+    year: number
+    day: number
+  }>({
+    month: dayjs().month() + 1,
+    year: dayjs().year(),
+    day: dayjs().date()
+  })
   const [openModal, setOpenModal] = useState<{
     date: string | null
     isOpen: boolean
@@ -29,6 +41,33 @@ function App() {
   const today = dayjs().format('DD-MM-YYYY')
   const eventsToDay = events.find((e) => e.date === today)
 
+  const allRecuringEvent = events.filter(
+    (e) => e.events.filter((eItem) => eItem.recurrence !== 'none').length > 0
+  )
+  const dateForEvent = getDateForRecurringEvent(allRecuringEvent)
+
+  function getDateForRecurringEvent(eventList: CalendarDay[]) {
+    const result: {
+      [key: string]: {
+        event: EventModel
+        dateBetween: string[]
+      }
+    } = {}
+
+    eventList.forEach((event) => {
+      event.events.forEach((ei) => {
+        const dateForEvent = getRecurringEventDates(ei, event.date)
+        if (dateForEvent && dateForEvent?.length > 0) {
+          result[ei.id] = {
+            event: ei,
+            dateBetween: dateForEvent || []
+          }
+        }
+      })
+    })
+    return result
+  }
+
   const eventsByDate = useMemo(() => {
     return events.reduce<{ [key: string]: EventModel[] }>((prev, curr) => {
       if (curr.date in prev) {
@@ -41,10 +80,12 @@ function App() {
     }, {})
   }, [events])
 
-  // const tes = test()
-  console.log(eventsByDate)
   const onSubmit = (values) => {
-    console.log(values)
+    const valueAdd = {
+      ...values,
+      type: values.type === 'appointment' ? 1 : 2,
+      id: events.length + 1
+    }
 
     if (openModal.date) {
       if (openModal.date in eventsByDate) {
@@ -52,7 +93,7 @@ function App() {
           if (event.date === openModal.date) {
             return {
               ...event,
-              events: [...event.events, ...[values]]
+              events: [...event.events, ...[valueAdd]]
             }
           }
           return { ...event }
@@ -61,7 +102,7 @@ function App() {
       } else {
         const newEvent = {
           date: openModal.date,
-          events: [values]
+          events: [valueAdd]
         }
         setEvents([...events, ...[newEvent]])
       }
@@ -73,31 +114,75 @@ function App() {
     })
   }
 
-  function generateRecurringEvents(
-    event: EventModel,
-    rule: 'weekly' | 'daily' | 'yearly' | 'monthly'
-  ) {
-    const rruleOptions = {
-      freq:
-        rule === 'daily'
-          ? RRule.DAILY
-          : rule === 'weekly'
-          ? RRule.WEEKLY
-          : rule === 'monthly'
-          ? RRule.MONTHLY
-          : RRule.YEARLY,
-      dtstart: new Date('2025-02-11'),
-      until: undefined,
-      count: 30
+  function getRecurringEventDates(event: EventModel, dateStr: string) {
+    const convertFreq = () => {
+      switch (event.recurrence) {
+        case 'daily':
+          return RRule.DAILY
+        case 'monthly':
+          return RRule.MONTHLY
+        case 'weekly':
+          return RRule.WEEKLY
+        case 'yearly':
+          return RRule.YEARLY
+        default:
+          return undefined
+      }
     }
-    console.log(event, rruleOptions)
+    console.log(convertFreq())
 
-    const ruleInstance = new RRule(rruleOptions)
-    const occurrences = ruleInstance.all()
+    if (convertFreq() || convertFreq() === 0) {
+      const dateCurr = dayjs(dateStr, 'DD-MM-YYYY')
+      const dateSelected = dayjs(
+        new Date(currentDate.year, currentDate.month - 1, currentDate.day)
+      )
+      const preMonthDateCurr = dateSelected.subtract(1, 'month')
+      const nextMonthDateCurr = dateSelected.add(1, 'month')
+      console.log(currentDate)
 
-    return occurrences.map((occurrence) => {
-      return dayjs(occurrence).format('DD-MM-YYYY')
-    })
+      console.log(preMonthDateCurr.year(), preMonthDateCurr.month(), 1, 'pre')
+      console.log(
+        nextMonthDateCurr.year(),
+        nextMonthDateCurr.month(),
+        nextMonthDateCurr.daysInMonth(),
+        'next'
+      )
+      console.log(dateCurr.year(), dateCurr.month(), dateCurr.date(), 'current')
+      const ruleConfig: Partial<Options> = {
+        freq: convertFreq(),
+        dtstart: new Date(dateCurr.year(), dateCurr.month(), dateCurr.date())
+      }
+      if (ruleConfig.freq === RRule.MONTHLY) {
+        ruleConfig.bymonthday = [-1]
+      }
+      const rule = new RRule(ruleConfig)
+
+      const allDates = rule.between(
+        new Date(preMonthDateCurr.year(), preMonthDateCurr.month(), 1),
+        new Date(
+          nextMonthDateCurr.year(),
+          nextMonthDateCurr.month(),
+          nextMonthDateCurr.daysInMonth()
+        ),
+        true
+      )
+      console.log(allDates.map((date) => dayjs(date).format('DD-MM-YYYY')))
+
+      const test = new RRule({
+        freq: RRule.MONTHLY,
+        dtstart: new Date(2025, 1, 1),
+        bymonthday: [-1]
+      })
+
+      const allTest = test.between(
+        new Date(2025, 1, 1),
+        new Date(2025, 3, 30),
+        true
+      )
+      console.log(allTest.map((date) => dayjs(date).format('DD-MM-YYYY')))
+
+      return allDates.map((date) => dayjs(date).format('DD-MM-YYYY'))
+    }
   }
 
   return (
@@ -162,11 +247,11 @@ function App() {
             className='w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all'
             {...register('type')}
           >
-            <option value='none'>Appointment</option>
-            <option value='daily'>Event</option>
+            <option value='appointment'>Appointment</option>
+            <option value='event'>Event</option>
           </select>
 
-          {/* <select
+          <select
             className='w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all'
             {...register('recurrence')}
           >
@@ -175,7 +260,7 @@ function App() {
             <option value='weekly'>Weekly</option>
             <option value='monthly'>Monthly</option>
             <option value='yearly'>Yearly</option>
-          </select> */}
+          </select>
         </form>
       </Modal>
       <div className='md:container mx-auto md:p-10 p-4 gap-y-6'>
@@ -191,22 +276,40 @@ function App() {
                 isOpen: true
               })
             }}
+            dateOnChange={(date) => setCurrentDate(date)}
             monthViewRender={(dayItem) => {
-              if (dayItem.date in eventsByDate) {
-                const eventList = eventsByDate[dayItem.date]
+              const eventList = eventsByDate[dayItem.date] || []
+              Object.keys(dateForEvent).forEach((key) => {
+                if (dateForEvent[key].dateBetween.includes(dayItem.date)) {
+                  // check is recurring date
+                  const checkExist = eventList.some(
+                    (e) => e.id === dateForEvent[key].event.id
+                  )
+                  if (!checkExist) {
+                    eventList.push(dateForEvent[key].event)
+                  }
+                }
+              })
+              // console.log(eventList, dayItem.date, dateForEvent, eventsByDate)
 
-                return eventList.map((v) => (
-                  <Event title={v.title} key={v.id} />
-                ))
-              }
-              return null
+              return eventList.map((v) => <Event title={v.title} key={v.id} />)
             }}
             dayViewRender={(start, date) => {
               const dateFormat = dayjs(
                 new Date(date.year, date.month - 1, date.day)
               ).format('DD-MM-YYYY')
-              const events = eventsByDate[dateFormat]
-
+              const events = eventsByDate[dateFormat] || []
+              Object.keys(dateForEvent).forEach((key) => {
+                if (dateForEvent[key].dateBetween.includes(dateFormat)) {
+                  // check is recurring date
+                  const checkExist = events.some(
+                    (e) => e.id === dateForEvent[key].event.id
+                  )
+                  if (!checkExist) {
+                    events.push(dateForEvent[key].event)
+                  }
+                }
+              })
               return events?.map((e) => {
                 const startTime = Number(e.time?.split(':')?.[0] || 0)
                 return startTime === start && <EventDay event={e} key={e.id} />
