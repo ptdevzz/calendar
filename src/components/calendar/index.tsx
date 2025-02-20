@@ -4,10 +4,15 @@ import { generateCalendar } from "../../untils/generateCalendar";
 import { ControlCalendar } from "./control";
 import DayItem from "./day-item";
 import dayjs from "dayjs";
+import { DayModel } from "../../models/day";
+
+interface CalendarProps {
+    onDayClick?: (day: DayModel) => void;
+    dayRender?:(day:DayModel) => React.ReactNode | null;
+}
 
 
-
-const Calendar = () => {
+const Calendar = ({ onDayClick,dayRender }: CalendarProps) => {
     const [date, setDate] = useState<{
         month: number;
         year: number;
@@ -16,8 +21,9 @@ const Calendar = () => {
         year: dayjs().year()
     })
     const calendars = useMemo(() => generateCalendar(date.year, date.month), [date])
-
-    return <div className="bg-white rounded-[4px] shadow">
+        console.log(calendars);
+        
+    return <div className="bg-white rounded-[4px] shadow h-fit">
         <ControlCalendar
             date={date}
             setDate={setDate}
@@ -34,10 +40,10 @@ const Calendar = () => {
                 <div>Sat</div>
             </div>
             {/* Days */}
-            {calendars.map((row, rowIdx) => {
+            {calendars.map((row, rowIdx) => {                
                 return <div className="grid grid-cols-7">
                     {row.map((col) => {
-                        return <DayItem key={col.date} item={col} rowIndex={rowIdx} />
+                        return <DayItem key={col.date} item={col} rowIndex={rowIdx} onDayClick={onDayClick} dayRender={dayRender} />
                     })}
                 </div>
             })}

@@ -43,7 +43,7 @@ export const ControlCalendar = ({ setDate, date }: ControlCalendarProps) => {
         })
     }
 
-    return <div className="flex items-center justify-between p-6">
+    return <div className="flex items-center justify-between p-6 flex-wrap gap-y-4">
         <div className="flex items-center gap-x-6">
             <Button buttonType="primary" onClick={handleClickToday}>
                 Today

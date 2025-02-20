@@ -5,25 +5,23 @@ import { DayModel } from "../../../models/day"
 interface DayItemProps {
     item: DayModel
     rowIndex: number
+    onDayClick?: (day: DayModel) => void;
+    dayRender?: (day: DayModel) => React.ReactNode | null;
 }
 
 
-const Event = () => {
-    const statusClass = {
-        confirmed: 'bg-light-orange text-light-blue before:bg-dark-blue',
-        pending: 'bg-dark-orange text-dark-blue before:bg-light-blue',
-        cancel: 'bg-dark-blue text-gray-300 before:bg-dark-orange'
-    }
-    return <div className={`mb-1 p-1 pl-2 py-[6px] rounded-md relative before:absolute before:w-1 before:h-full before:top-0 before:left-0 overflow-hidden ${statusClass['cancel']}`}>
-        <p className="text-xs line-clamp-1">First session with asdsad ad asd</p>
-    </div>
-}
 
-const DayItem = ({ item, rowIndex }: DayItemProps) => {
+
+
+const DayItem = ({ item, rowIndex, onDayClick, dayRender }: DayItemProps) => {
     const isToday = dayjs().format("DD-MM-YYYY") === item.date
-
     const todayClass = 'bg-dark-blue text-white'
-    return <div className={`h-[8rem] border border-calendar-title ${rowIndex === 0 ? 'border-t-2' : ''}`}>
+
+    
+
+    return <div className={`h-[8rem] border border-calendar-title ${rowIndex === 0 ? 'border-t-2' : ''}`} onClick={() => {
+        onDayClick?.(item)
+    }}>
         <div className="flex items-center justify-center">
             <p className={`text-center ${item.isNextMonth || item.isPrevMonth ? 'text-[#d1dfd8]' : 'text-dark-calendar-title'}  ${isToday ? todayClass : ''} w-8 h-8 p-1 rounded-full flex items-center justify-center`}>{item.day}</p>
         </div>
@@ -32,7 +30,7 @@ const DayItem = ({ item, rowIndex }: DayItemProps) => {
       [&::-webkit-scrollbar-track]:bg-gray-100
       [&::-webkit-scrollbar-thumb]:bg-dark-blue"
         >
-            {item.day === 6 && <Event />}
+            {dayRender?.(item)}
         </div>
     </div>
 }

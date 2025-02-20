@@ -1,13 +1,14 @@
 import { EVENT_TYPE } from "../../../constant"
-import { EventType } from "../../../models/event"
+import { EventModel, EventType } from "../../../models/event"
 import { FiVideo } from "react-icons/fi";
 
 
 interface EventItemProps {
     type: EventType
+    event:EventModel
 }
 
-const EventItem = ({ type }: EventItemProps) => {
+const EventItem = ({ type,event }: EventItemProps) => {
     const classByType = {
         [EVENT_TYPE.CONFIRM]: {
             wrapper: 'bg-light-orange text-light-blue before:bg-dark-blue',
@@ -36,8 +37,8 @@ const EventItem = ({ type }: EventItemProps) => {
     return <li className={`mb-1 p-1 pl-6 py-6 rounded-lg relative before:absolute before:w-2  before:h-full before:top-0 before:left-0 overflow-hidden ${classByType[type].wrapper} ${classByType[type].beforeWrapper}`}>
         <div>
             <div>
-                <p className={`text-lg line-clamp-1 ${classByType[type].title} text-wrap font-medium`}>First session with Alex Stan</p>
-                <p className={`mt-2 font-light ${classByType[type].time}`}>9:00 AM - 9:30 AM GMT+8</p>
+                <p className={`text-lg line-clamp-1 ${classByType[type].title} text-wrap font-medium`}>{event.title}</p>
+                <p className={`mt-2 font-light ${classByType[type].time}`}>{event.time}</p>
             </div>
             <div>
 
