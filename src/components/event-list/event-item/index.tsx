@@ -5,10 +5,11 @@ import { FiVideo } from "react-icons/fi";
 
 interface EventItemProps {
     type: EventType
-    event:EventModel
+    event: EventModel
 }
 
-const EventItem = ({ type,event }: EventItemProps) => {
+const EventItem = ({ type, event }: EventItemProps) => {
+    const time =  Number(event?.time?.split(":")?.[0] || 0)
     const classByType = {
         [EVENT_TYPE.CONFIRM]: {
             wrapper: 'bg-light-orange text-light-blue before:bg-dark-blue',
@@ -38,7 +39,7 @@ const EventItem = ({ type,event }: EventItemProps) => {
         <div>
             <div>
                 <p className={`text-lg line-clamp-1 ${classByType[type].title} text-wrap font-medium`}>{event.title}</p>
-                <p className={`mt-2 font-light ${classByType[type].time}`}>{event.time}</p>
+                <p className={`mt-2 font-light ${classByType[type].time}`}>{event.time} {time > 12 ? "PM" : "AM"}</p>
             </div>
             <div>
 

@@ -1,52 +1,50 @@
 import { useMemo, useState } from "react";
 import { generateCalendar } from "../../untils/generateCalendar";
 
-import { ControlCalendar } from "./control";
-import DayItem from "./day-item";
 import dayjs from "dayjs";
 import { DayModel } from "../../models/day";
+import CalendarMonthView from "./grid-view/month/CalendarMonthView";
+import CalendarDayView from "./grid-view/day/CalendarDayView";
+import { ControlMonthView } from "./control/month";
+import { ControlDayView } from "./control/day";
 
 interface CalendarProps {
     onDayClick?: (day: DayModel) => void;
-    dayRender?:(day:DayModel) => React.ReactNode | null;
+    monthViewRender?: (day: DayModel) => React.ReactNode | null;
+    dayViewRender?: (start: number, date: {
+        month: number;
+        year: number;
+        day: number;
+    }) => React.ReactNode | null
 }
 
-
-const Calendar = ({ onDayClick,dayRender }: CalendarProps) => {
+const Calendar = ({ onDayClick, monthViewRender, dayViewRender }: CalendarProps) => {
+    const [viewMode, setViewMode] = useState<"day" | "month">('month')
     const [date, setDate] = useState<{
         month: number;
         year: number;
+        day: number;
     }>({
         month: dayjs().month() + 1,
-        year: dayjs().year()
+        year: dayjs().year(),
+        day: dayjs().date()
     })
     const calendars = useMemo(() => generateCalendar(date.year, date.month), [date])
-        console.log(calendars);
-        
+    const gridViewCpn: { [key: string]: { control: React.ReactNode; view: React.ReactNode } } = {
+        day: {
+            control: <ControlDayView date={date} setDate={setDate} setViewMode={setViewMode} />,
+            view: <CalendarDayView dayRender={dayViewRender} date={date} />
+        },
+        month: {
+            control: <ControlMonthView date={date} setDate={setDate} setViewMode={setViewMode} />,
+            view: <CalendarMonthView calendars={calendars} dayRender={monthViewRender} onDayClick={onDayClick} />
+        }
+    }
+
     return <div className="bg-white rounded-[4px] shadow h-fit">
-        <ControlCalendar
-            date={date}
-            setDate={setDate}
-        />
-        <div className="mt-8">
-            {/* Header */}
-            <div className="grid grid-cols-7 text-center text-secondary-title font-bold mb-6">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-            </div>
-            {/* Days */}
-            {calendars.map((row, rowIdx) => {                
-                return <div className="grid grid-cols-7">
-                    {row.map((col) => {
-                        return <DayItem key={col.date} item={col} rowIndex={rowIdx} onDayClick={onDayClick} dayRender={dayRender} />
-                    })}
-                </div>
-            })}
+        {gridViewCpn[viewMode].control}
+        <div className="">
+            {gridViewCpn[viewMode].view}
         </div>
     </div>
 }

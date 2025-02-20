@@ -11,6 +11,7 @@ import Event from './components/event'
 import { useForm } from 'react-hook-form'
 import { RRule } from 'rrule'
 import dayjs from 'dayjs'
+import { EventDay } from './components/event-day'
 function App() {
   const [openModal, setOpenModal] = useState<{ date: string | null; isOpen: boolean }>({
     date: null,
@@ -33,36 +34,13 @@ function App() {
     }, {})
   }, [events])
 
-  const test = () => {
-    const allRecurringDate: { event: EventModel; reDate: string[] }[] = []
-    Object.keys(eventsByDate).forEach((key) => {
-      const events = eventsByDate[key]
-      events.forEach((e) => {
-        if (e.recurrence !== 'none' && e.recurrence) {
-          const generateRecurringDate = generateRecurringEvents(e, e.recurrence)
-          allRecurringDate.push({
-            event: e,
-            reDate: generateRecurringDate
-          })
-        }
-      })
-    })
-    allRecurringDate.forEach((date) => {
-      if (date.reDate.length > 0) {
-        date.reDate.forEach((recurringDate) => {
-          if (recurringDate in eventsByDate) {
-            eventsByDate[recurringDate] = [...eventsByDate[recurringDate], ...[date.event]]
-          } else {
-            eventsByDate[recurringDate] = [...[date.event]]
-          }
-        })
-      }
-    })
-  }
 
   // const tes = test()
   console.log(eventsByDate);
   const onSubmit = (values) => {
+
+    console.log(values);
+
 
     if (openModal.date) {
       if (openModal.date in eventsByDate) {
@@ -85,6 +63,10 @@ function App() {
       }
     }
     reset()
+    setOpenModal({
+      date: null,
+      isOpen: false
+    })
   }
 
 
@@ -123,10 +105,7 @@ function App() {
         }}
         onSave={() => {
           handleSubmit(onSubmit)()
-          setOpenModal({
-            date: null,
-            isOpen: false
-          })
+
         }}
       >
         <h2 className='text-xl font-semibold mb-4'>Create Event</h2>
@@ -187,19 +166,30 @@ function App() {
             <EventList event={eventsToDay} />
           </div>
           <Calendar
+            gridView='day'
             onDayClick={(day) => {
               setOpenModal({
                 date: day.date,
                 isOpen: true
               })
             }}
-            dayRender={(dayItem) => {
+            monthViewRender={(dayItem) => {
               if (dayItem.date in eventsByDate) {
                 const eventList = eventsByDate[dayItem.date]
 
                 return eventList.map((v) => <Event title={v.title} key={v.id} />)
               }
               return null
+            }}
+
+            dayViewRender={(start, date) => {
+              const dateFormat = dayjs(new Date(date.year, date.month - 1, date.day)).format("DD-MM-YYYY")
+              const events = eventsByDate[dateFormat]
+
+              return events?.map((e) => {
+                const startTime = Number(e.time?.split(":")?.[0] || 0)
+                return startTime === start && <EventDay event={e} key={e.id} />
+              })
             }}
           />
         </div>

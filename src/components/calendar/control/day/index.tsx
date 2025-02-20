@@ -1,45 +1,56 @@
-import { Button } from "../../common/button"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { Select } from "../../common/select";
 import { SetStateAction } from "react";
 import dayjs from "dayjs";
+import { Button } from "../../../common/button";
+import { Select } from "../../../common/select";
 interface ControlCalendarProps {
     setDate: React.Dispatch<SetStateAction<{
         month: number;
         year: number
+        day: number
     }>>
     date: {
         month: number;
         year: number
+        day: number
     }
+    setViewMode: React.Dispatch<React.SetStateAction<"day" | "month">>
 }
 
 
 
-export const ControlCalendar = ({ setDate, date }: ControlCalendarProps) => {
+export const ControlDayView = ({ setDate, date, setViewMode }: ControlCalendarProps) => {
 
     const currentDate = dayjs()
 
-    const currentMonthYear = dayjs(new Date(date.year, date.month - 1))
+    const daySelected = dayjs(new Date(date.year, date.month - 1, date.day))
 
     const handleClickToday = () => {
         setDate({
+            ...date,
             month: currentDate.month() + 1,
-            year: currentDate.year()
+            year: currentDate.year(),
+            day: currentDate.date()
         })
     }
 
     const handleClickPrevious = () => {
+        const newDate = daySelected.subtract(1, 'day')
         setDate({
-            month: date.month === 1 ? 12 : date.month - 1,
-            year: date.month === 1 ? date.year - 1 : date.year
+            ...date,
+            month: newDate.month() + 1,
+            year: newDate.year(),
+            day: newDate.date()
         })
     }
 
     const handleClickNext = () => {
+        const newDate = daySelected.add(1, 'day')
         setDate({
-            month: date.month === 12 ? 1 : date.month + 1,
-            year: date.month === 12 ? date.year + 1 : date.year
+            ...date,
+            month: newDate.month() + 1,
+            year: newDate.year(),
+            day: newDate.date()
         })
     }
 
@@ -53,14 +64,21 @@ export const ControlCalendar = ({ setDate, date }: ControlCalendarProps) => {
                 <FaChevronRight className="cursor-pointer" onClick={handleClickNext} />
             </div>
             <h2 className="font-bold text-xl text-dark-blue">
-                {currentMonthYear.format("MMMM YYYY")}
+                {daySelected.format("DD MMM, YYYY")}
             </h2>
         </div>
         <div>
             <Select
+                onChange={(e) => {
+                    setViewMode(e.target.value as "month" | "day")
+                }}
                 options={[{
                     label: 'Month',
                     value: 'month'
+                },
+                {
+                    label: 'Day',
+                    value: 'day'
                 }]}
             />
         </div>
