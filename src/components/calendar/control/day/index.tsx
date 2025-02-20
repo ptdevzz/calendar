@@ -15,11 +15,12 @@ interface ControlCalendarProps {
         day: number
     }
     setViewMode: React.Dispatch<React.SetStateAction<"day" | "month">>
+    viewMode: "day" | "month"
 }
 
 
 
-export const ControlDayView = ({ setDate, date, setViewMode }: ControlCalendarProps) => {
+export const ControlDayView = ({ setDate, date, setViewMode, viewMode }: ControlCalendarProps) => {
 
     const currentDate = dayjs()
 
@@ -72,6 +73,7 @@ export const ControlDayView = ({ setDate, date, setViewMode }: ControlCalendarPr
                 onChange={(e) => {
                     setViewMode(e.target.value as "month" | "day")
                 }}
+                value={viewMode}
                 options={[{
                     label: 'Month',
                     value: 'month'

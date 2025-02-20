@@ -32,11 +32,11 @@ const Calendar = ({ onDayClick, monthViewRender, dayViewRender }: CalendarProps)
     const calendars = useMemo(() => generateCalendar(date.year, date.month), [date])
     const gridViewCpn: { [key: string]: { control: React.ReactNode; view: React.ReactNode } } = {
         day: {
-            control: <ControlDayView date={date} setDate={setDate} setViewMode={setViewMode} />,
+            control: <ControlDayView date={date} setDate={setDate} setViewMode={setViewMode} viewMode={viewMode} />,
             view: <CalendarDayView dayRender={dayViewRender} date={date} />
         },
         month: {
-            control: <ControlMonthView date={date} setDate={setDate} setViewMode={setViewMode} />,
+            control: <ControlMonthView date={date} setDate={setDate} setViewMode={setViewMode} viewMode={viewMode} />,
             view: <CalendarMonthView calendars={calendars} dayRender={monthViewRender} onDayClick={onDayClick} />
         }
     }
