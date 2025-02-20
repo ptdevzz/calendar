@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from 'react'
 import './App.css'
 import Calendar from './components/calendar'
@@ -13,13 +12,21 @@ import { RRule } from 'rrule'
 import dayjs from 'dayjs'
 import { EventDay } from './components/event-day'
 function App() {
-  const [openModal, setOpenModal] = useState<{ date: string | null; isOpen: boolean }>({
+  const [openModal, setOpenModal] = useState<{
+    date: string | null
+    isOpen: boolean
+  }>({
     date: null,
     isOpen: false
   })
   const [events, setEvents] = useState<CalendarDay[]>(data as CalendarDay[])
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
-  const today = dayjs().format("DD-MM-YYYY")
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm()
+  const today = dayjs().format('DD-MM-YYYY')
   const eventsToDay = events.find((e) => e.date === today)
 
   const eventsByDate = useMemo(() => {
@@ -34,13 +41,10 @@ function App() {
     }, {})
   }, [events])
 
-
   // const tes = test()
-  console.log(eventsByDate);
+  console.log(eventsByDate)
   const onSubmit = (values) => {
-
-    console.log(values);
-
+    console.log(values)
 
     if (openModal.date) {
       if (openModal.date in eventsByDate) {
@@ -69,28 +73,32 @@ function App() {
     })
   }
 
-
-  function generateRecurringEvents(event: EventModel, rule: 'weekly' | 'daily' | 'yearly' | 'monthly') {
-
+  function generateRecurringEvents(
+    event: EventModel,
+    rule: 'weekly' | 'daily' | 'yearly' | 'monthly'
+  ) {
     const rruleOptions = {
-      freq: rule === 'daily' ? RRule.DAILY : rule === 'weekly' ? RRule.WEEKLY : rule === 'monthly' ? RRule.MONTHLY : RRule.YEARLY,
+      freq:
+        rule === 'daily'
+          ? RRule.DAILY
+          : rule === 'weekly'
+          ? RRule.WEEKLY
+          : rule === 'monthly'
+          ? RRule.MONTHLY
+          : RRule.YEARLY,
       dtstart: new Date('2025-02-11'),
       until: undefined,
       count: 30
-    };
-    console.log(event, rruleOptions);
+    }
+    console.log(event, rruleOptions)
 
-
-
-    const ruleInstance = new RRule(rruleOptions);
-    const occurrences = ruleInstance.all();
+    const ruleInstance = new RRule(rruleOptions)
+    const occurrences = ruleInstance.all()
 
     return occurrences.map((occurrence) => {
-      return dayjs(occurrence).format("DD-MM-YYYY")
-    });
+      return dayjs(occurrence).format('DD-MM-YYYY')
+    })
   }
-
-
 
   return (
     <div className='bg-calendar-title'>
@@ -105,7 +113,6 @@ function App() {
         }}
         onSave={() => {
           handleSubmit(onSubmit)()
-
         }}
       >
         <h2 className='text-xl font-semibold mb-4'>Create Event</h2>
@@ -116,7 +123,11 @@ function App() {
             className='w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all'
             {...register('title', { required: 'Event title is required' })}
           />
-          {errors.title && <span className="text-red-500 text-sm">{errors.title.message as string}</span>}
+          {errors.title && (
+            <span className='text-red-500 text-sm'>
+              {errors.title.message as string}
+            </span>
+          )}
 
           <input
             type='text'
@@ -124,14 +135,22 @@ function App() {
             className='w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all'
             {...register('location', { required: 'Location is required' })}
           />
-          {errors.location && <span className="text-red-500 text-sm">{errors.location.message as string}</span>}
+          {errors.location && (
+            <span className='text-red-500 text-sm'>
+              {errors.location.message as string}
+            </span>
+          )}
 
           <input
             type='time'
             className='w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all'
             {...register('time')}
           />
-          {errors.location && <span className="text-red-500 text-sm">{errors.location.message as string}</span>}
+          {errors.location && (
+            <span className='text-red-500 text-sm'>
+              {errors.location.message as string}
+            </span>
+          )}
 
           <textarea
             placeholder='Description'
@@ -166,7 +185,6 @@ function App() {
             <EventList event={eventsToDay} />
           </div>
           <Calendar
-            gridView='day'
             onDayClick={(day) => {
               setOpenModal({
                 date: day.date,
@@ -177,17 +195,20 @@ function App() {
               if (dayItem.date in eventsByDate) {
                 const eventList = eventsByDate[dayItem.date]
 
-                return eventList.map((v) => <Event title={v.title} key={v.id} />)
+                return eventList.map((v) => (
+                  <Event title={v.title} key={v.id} />
+                ))
               }
               return null
             }}
-
             dayViewRender={(start, date) => {
-              const dateFormat = dayjs(new Date(date.year, date.month - 1, date.day)).format("DD-MM-YYYY")
+              const dateFormat = dayjs(
+                new Date(date.year, date.month - 1, date.day)
+              ).format('DD-MM-YYYY')
               const events = eventsByDate[dateFormat]
 
               return events?.map((e) => {
-                const startTime = Number(e.time?.split(":")?.[0] || 0)
+                const startTime = Number(e.time?.split(':')?.[0] || 0)
                 return startTime === start && <EventDay event={e} key={e.id} />
               })
             }}
