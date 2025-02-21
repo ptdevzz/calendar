@@ -4,7 +4,7 @@ import Calendar from './components/calendar'
 import CalendarMini from './components/calendar-mini'
 import Modal from './components/common/modal'
 import EventList from './components/event-list'
-import data from './data/event.json'
+import { data } from './data/event'
 import { CalendarDay, EventModel } from './models/event'
 import Event from './components/event'
 import { useForm } from 'react-hook-form'
@@ -15,6 +15,7 @@ import { Options, RRule } from 'rrule'
 
 dayjs.extend(customParseFormat)
 function App() {
+  console.log(data)
   const [currentDate, setCurrentDate] = useState<{
     month: number
     year: number
@@ -31,7 +32,10 @@ function App() {
     date: null,
     isOpen: false
   })
-  const [events, setEvents] = useState<CalendarDay[]>(data as CalendarDay[])
+  const [events, setEvents] = useState<CalendarDay[]>([
+    ...(data as CalendarDay[])
+  ])
+
   const {
     register,
     handleSubmit,
@@ -39,11 +43,18 @@ function App() {
     formState: { errors }
   } = useForm()
   const today = dayjs().format('DD-MM-YYYY')
-  const eventsToDay = events.find((e) => e.date === today)
+  const eventsToDay = [...events].find((e) => e.date === today)
 
-  const allRecuringEvent = events.filter(
-    (e) => e.events.filter((eItem) => eItem.recurrence !== 'none').length > 0
+  const allRecuringEvent = useMemo(
+    () =>
+      [...events].filter((e) => {
+        return (
+          e.events.filter((eItem) => eItem.recurrence !== 'none').length > 0
+        )
+      }),
+    [events]
   )
+
   const dateForEvent = getDateForRecurringEvent(allRecuringEvent)
 
   function getDateForRecurringEvent(eventList: CalendarDay[]) {
@@ -137,6 +148,7 @@ function App() {
       )
       const preMonthDateCurr = dateSelected.subtract(1, 'month')
       const nextMonthDateCurr = dateSelected.add(1, 'month')
+      console.log(dateCurr.format('DD/MM'), dateStr)
 
       const ruleConfig: Partial<Options> = {
         freq: convertFreq(),
@@ -255,6 +267,7 @@ function App() {
             dateOnChange={(date) => setCurrentDate(date)}
             monthViewRender={(dayItem) => {
               const eventList = eventsByDate[dayItem.date] || []
+
               Object.keys(dateForEvent).forEach((key) => {
                 if (dateForEvent[key].dateBetween.includes(dayItem.date)) {
                   // check is recurring date
