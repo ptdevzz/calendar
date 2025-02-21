@@ -129,7 +129,6 @@ function App() {
           return undefined
       }
     }
-    console.log(convertFreq())
 
     if (convertFreq() || convertFreq() === 0) {
       const dateCurr = dayjs(dateStr, 'DD-MM-YYYY')
@@ -138,16 +137,7 @@ function App() {
       )
       const preMonthDateCurr = dateSelected.subtract(1, 'month')
       const nextMonthDateCurr = dateSelected.add(1, 'month')
-      console.log(currentDate)
 
-      console.log(preMonthDateCurr.year(), preMonthDateCurr.month(), 1, 'pre')
-      console.log(
-        nextMonthDateCurr.year(),
-        nextMonthDateCurr.month(),
-        nextMonthDateCurr.daysInMonth(),
-        'next'
-      )
-      console.log(dateCurr.year(), dateCurr.month(), dateCurr.date(), 'current')
       const ruleConfig: Partial<Options> = {
         freq: convertFreq(),
         dtstart: new Date(dateCurr.year(), dateCurr.month(), dateCurr.date())
@@ -166,20 +156,6 @@ function App() {
         ),
         true
       )
-      console.log(allDates.map((date) => dayjs(date).format('DD-MM-YYYY')))
-
-      const test = new RRule({
-        freq: RRule.MONTHLY,
-        dtstart: new Date(2025, 1, 1),
-        bymonthday: [-1]
-      })
-
-      const allTest = test.between(
-        new Date(2025, 1, 1),
-        new Date(2025, 3, 30),
-        true
-      )
-      console.log(allTest.map((date) => dayjs(date).format('DD-MM-YYYY')))
 
       return allDates.map((date) => dayjs(date).format('DD-MM-YYYY'))
     }
