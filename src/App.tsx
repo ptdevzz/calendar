@@ -161,7 +161,7 @@ function App() {
         dtstart: new Date(dateCurr.year(), dateCurr.month(), dateCurr.date())
       }
       if (ruleConfig.freq === RRule.MONTHLY) {
-        ruleConfig.bymonthday = [dateCurr.date() === 1 ? -1 : dateCurr.date() + 1]
+        ruleConfig.bymonthday = [dateCurr.date() === 1 ? -1 : dateCurr.date() - 1]
       }
       const rule = new RRule(ruleConfig)
 
