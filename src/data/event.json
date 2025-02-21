@@ -9,7 +9,7 @@
         "location": "Văn phòng khách hàng",
         "time": "09:00",
         "description": "Thảo luận tiến độ dự án",
-        "recurrence": "daily",
+        "recurrence": "weekly",
         "status": 1
       },
       {
