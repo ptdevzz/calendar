@@ -60,9 +60,6 @@ function App() {
         }
       })
     })
-
-
-
     return result
   }
 
@@ -164,7 +161,7 @@ function App() {
         dtstart: new Date(dateCurr.year(), dateCurr.month(), dateCurr.date())
       }
       if (ruleConfig.freq === RRule.MONTHLY) {
-        ruleConfig.bymonthday = [-1]
+        ruleConfig.bymonthday = -1  
       }
       const rule = new RRule(ruleConfig)
 
@@ -177,6 +174,8 @@ function App() {
         ),
         true
       )
+      console.log(allDates);
+
 
       return allDates.map((date) => dayjs(date).format('DD-MM-YYYY'))
     }
@@ -278,8 +277,6 @@ function App() {
             dateOnChange={(date) => setCurrentDate(date)}
             monthViewRender={(dayItem) => {
               const eventList = eventsByDate[dayItem.date] || []
-
-
               Object.keys(dateForEvent).forEach((key) => {
                 if (dateForEvent[key].dateBetween.includes(dayItem.date)) {
                   // check is recurring date
