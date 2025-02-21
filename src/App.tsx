@@ -12,6 +12,7 @@ import { EventDay } from './components/event-day'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { Options, RRule } from 'rrule'
+console.log(data, 'data');
 
 dayjs.extend(customParseFormat)
 function App() {
@@ -31,7 +32,7 @@ function App() {
     date: null,
     isOpen: false
   })
-  const [events, setEvents] = useState<CalendarDay[]>([...data])
+  const [events, setEvents] = useState<CalendarDay[]>(data as CalendarDay[])
 
   const {
     register,
@@ -40,22 +41,32 @@ function App() {
     formState: { errors }
   } = useForm()
   const today = dayjs().format('DD-MM-YYYY')
-  const eventsToDay = [...events].find((e) => e.date === today)
 
-  const allRecuringEvent = useMemo(
-    () =>
-      [...events].filter((e) => {
+  const eventsToDay = useMemo(() => {
+    return { ...events.find((e) => e.date === today) }
+  }, [events])
 
-        return (
-          [...e.events].filter((eItem) => eItem.recurrence !== 'none').length > 0
-        )
-      }),
-    [events, openModal]
-  )
+  const dateForEvent = useMemo(() => {
+    const allRecuringEvent = getAllRecuringEvent(events)
+    return getDateForRecurringEvent([...allRecuringEvent])
+  }, [events])
 
 
-  // const allRecuringEvent = []
-  const dateForEvent = getDateForRecurringEvent([...allRecuringEvent])
+  function getAllRecuringEvent(eventsArr: CalendarDay[]) {
+    const result: CalendarDay[] = []
+    eventsArr.forEach((v) => {
+      v.events.forEach((event) => {
+        if (event.recurrence !== 'none') {
+          result.push(v)
+        }
+      })
+    })
+
+    console.log(events, 'events');
+
+
+    return result
+  }
 
   function getDateForRecurringEvent(eventList: CalendarDay[]) {
     const result: {
@@ -80,11 +91,11 @@ function App() {
   }
 
   const eventsByDate = useMemo(() => {
-    return [...events].reduce<{ [key: string]: EventModel[] }>((prev, curr) => {
+    return events.reduce<{ [key: string]: EventModel[] }>((prev, curr) => {
       if (curr.date in prev) {
         return prev
       }
-      prev[curr.date] = curr.events
+      prev[curr.date] = [...curr.events]
       return {
         ...prev
       }
