@@ -49,7 +49,7 @@ function App() {
   const dateForEvent = useMemo(() => {
     const allRecuringEvent = getAllRecuringEvent(events)
     return getDateForRecurringEvent([...allRecuringEvent])
-  }, [events])
+  }, [events, currentDate])
 
 
   function getAllRecuringEvent(eventsArr: CalendarDay[]) {
