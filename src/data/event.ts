@@ -57,11 +57,11 @@ export const data = [
       {
         id: 5,
         type: 'appointment',
-        title: 'Hẹn gặp đối tác',
+        title: 'Test monthly',
         location: 'Café Trung tâm',
         time: '11:30',
         description: 'Thảo luận về hợp tác chiến lược',
-        recurrence: 'none',
+        recurrence: 'monthly',
         status: 1
       }
     ]
