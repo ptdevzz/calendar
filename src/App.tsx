@@ -42,7 +42,7 @@ function App() {
   const today = dayjs().format('DD-MM-YYYY')
 
   const eventsToDay = useMemo(() => {
-    return { ...events.find((e) => e.date === today) }
+    return events.find((e) => e.date === today)
   }, [events])
 
   const dateForEvent = useMemo(() => {
