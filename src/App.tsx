@@ -15,7 +15,6 @@ import { Options, RRule } from 'rrule'
 
 dayjs.extend(customParseFormat)
 function App() {
-  console.log(data)
   const [currentDate, setCurrentDate] = useState<{
     month: number
     year: number
@@ -148,7 +147,6 @@ function App() {
       )
       const preMonthDateCurr = dateSelected.subtract(1, 'month')
       const nextMonthDateCurr = dateSelected.add(1, 'month')
-      console.log(dateCurr.format('DD/MM'), dateStr)
 
       const ruleConfig: Partial<Options> = {
         freq: convertFreq(),
