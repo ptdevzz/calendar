@@ -47,14 +47,15 @@ const CalendarMini = () => {
                 <div>FRI</div>
                 <div>SAT</div>
             </div>
-            {calendarsMini.map((row) => {
+            {calendarsMini.map((row,idx) => {
                 return <div
                     className="grid grid-cols-7 text-center text-dark-calendar-title font-mono my-4"
+                    key={idx}
                 >
                     {row.map((col) => {
                         const blurText = 'opacity-60'
                         const isToday = currentDay === col.date
-                        return <div className="flex items-center justify-center">
+                        return <div className="flex items-center justify-center" key={col.date}>
                             <p className={`flex items-center justify-center rounded-full w-5 h-5 p-4 text-xs ${col.isNextMonth || col.isPrevMonth ? blurText : ''} ${isToday ? 'bg-light-blue text-white' : ''}`}>{col.day}</p>
                         </div>
                     })}

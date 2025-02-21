@@ -17,7 +17,7 @@ const EventList = ({ event }: EventListProps) => {
         </div>
         <p className="font-medium text-xl text-secondary-title">{today}</p>
         <ul className="mt-6">
-            {event?.events?.map((e) => <EventItem type={e.status} event={e} />)}
+            {event?.events?.map((e) => <EventItem type={e.status} key={e.id} event={e} />)}
         </ul>
     </div>
 }

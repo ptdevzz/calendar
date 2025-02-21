@@ -27,10 +27,11 @@ const CalendarMonthView = ({
       {/* Days */}
       {calendars.map((row, rowIdx) => {
         return (
-          <div className='grid grid-cols-7'>
+          <div className='grid grid-cols-7' key={rowIdx}>
             {row.map((col) => {
               return (
                 <DayItem
+
                   key={col.date}
                   item={col}
                   rowIndex={rowIdx}

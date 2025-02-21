@@ -7,7 +7,6 @@ interface EventItemProps {
 }
 
 const EventItem = ({ type, event }: EventItemProps) => {
-  console.log(type)
 
   const time = Number(event?.time?.split(':')?.[0] || 0)
   const classByType = {

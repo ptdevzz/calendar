@@ -32,7 +32,7 @@ export const generateCalendar = (year: number, month: number): DayModel[][] => {
       }
       if (i === 0 && j < startDay) {
         const dateStr = dayjs(
-          new Date(previousYear, previousMonth - 1, prevMonthDay)
+          new Date(previousYear, previousMonth, prevMonthDay)
         ).format('DD-MM-YYYY')
         dayInfo.isPrevMonth = true
         dayInfo.day = prevMonthDay++

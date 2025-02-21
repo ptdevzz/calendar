@@ -31,9 +31,7 @@ function App() {
     date: null,
     isOpen: false
   })
-  const [events, setEvents] = useState<CalendarDay[]>([
-    ...(data as CalendarDay[])
-  ])
+  const [events, setEvents] = useState<CalendarDay[]>([...data])
 
   const {
     register,
@@ -47,14 +45,17 @@ function App() {
   const allRecuringEvent = useMemo(
     () =>
       [...events].filter((e) => {
+
         return (
-          e.events.filter((eItem) => eItem.recurrence !== 'none').length > 0
+          [...e.events].filter((eItem) => eItem.recurrence !== 'none').length > 0
         )
       }),
-    [events]
+    [events, openModal]
   )
 
-  const dateForEvent = getDateForRecurringEvent(allRecuringEvent)
+
+  // const allRecuringEvent = []
+  const dateForEvent = getDateForRecurringEvent([...allRecuringEvent])
 
   function getDateForRecurringEvent(eventList: CalendarDay[]) {
     const result: {
@@ -79,7 +80,7 @@ function App() {
   }
 
   const eventsByDate = useMemo(() => {
-    return events.reduce<{ [key: string]: EventModel[] }>((prev, curr) => {
+    return [...events].reduce<{ [key: string]: EventModel[] }>((prev, curr) => {
       if (curr.date in prev) {
         return prev
       }
@@ -148,6 +149,7 @@ function App() {
       const preMonthDateCurr = dateSelected.subtract(1, 'month')
       const nextMonthDateCurr = dateSelected.add(1, 'month')
 
+
       const ruleConfig: Partial<Options> = {
         freq: convertFreq(),
         dtstart: new Date(dateCurr.year(), dateCurr.month(), dateCurr.date())
@@ -167,9 +169,16 @@ function App() {
         true
       )
 
+      // console.log("prev", preMonthDateCurr.format("DD/MM/YYYY"));
+      // console.log("current", dateSelected.format("DD/MM/YYYY"));
+      // console.log("next", nextMonthDateCurr.format("DD/MM/YYYY"));
+      // console.log(allDates.map((date) => dayjs(date).format('DD-MM-YYYY')));
+
       return allDates.map((date) => dayjs(date).format('DD-MM-YYYY'))
     }
   }
+
+
 
   return (
     <div className='bg-calendar-title'>
@@ -266,7 +275,9 @@ function App() {
             monthViewRender={(dayItem) => {
               const eventList = eventsByDate[dayItem.date] || []
 
+
               Object.keys(dateForEvent).forEach((key) => {
+                // console.log(dayItem, dateForEvent[key].dateBetween.includes(dayItem.date));
                 if (dateForEvent[key].dateBetween.includes(dayItem.date)) {
                   // check is recurring date
                   const checkExist = eventList.some(
@@ -277,7 +288,6 @@ function App() {
                   }
                 }
               })
-              // console.log(eventList, dayItem.date, dateForEvent, eventsByDate)
 
               return eventList.map((v) => <Event title={v.title} key={v.id} />)
             }}

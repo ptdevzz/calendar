@@ -9,7 +9,7 @@ export const data = [
         location: 'Văn phòng khách hàng',
         time: '09:00',
         description: 'Thảo luận tiến độ dự án',
-        recurrence: 'monthly',
+        recurrence: 'none',
         status: 1
       },
       {
@@ -20,7 +20,7 @@ export const data = [
         time: '02:00',
         description: 'Tìm hiểu về các tính năng mới của sản phẩm',
         url: 'https://www.eventbrite.sg/e/sample-webinar-event',
-        recurrence: 'none',
+        recurrence: 'daily',
         status: 2
       }
     ]
