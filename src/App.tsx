@@ -12,7 +12,6 @@ import { EventDay } from './components/event-day'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { Options, RRule } from 'rrule'
-console.log(data, 'data');
 
 dayjs.extend(customParseFormat)
 function App() {
@@ -62,7 +61,6 @@ function App() {
       })
     })
 
-    console.log(events, 'events');
 
 
     return result
@@ -180,11 +178,6 @@ function App() {
         true
       )
 
-      // console.log("prev", preMonthDateCurr.format("DD/MM/YYYY"));
-      // console.log("current", dateSelected.format("DD/MM/YYYY"));
-      // console.log("next", nextMonthDateCurr.format("DD/MM/YYYY"));
-      // console.log(allDates.map((date) => dayjs(date).format('DD-MM-YYYY')));
-
       return allDates.map((date) => dayjs(date).format('DD-MM-YYYY'))
     }
   }
@@ -288,7 +281,6 @@ function App() {
 
 
               Object.keys(dateForEvent).forEach((key) => {
-                // console.log(dayItem, dateForEvent[key].dateBetween.includes(dayItem.date));
                 if (dateForEvent[key].dateBetween.includes(dayItem.date)) {
                   // check is recurring date
                   const checkExist = eventList.some(
