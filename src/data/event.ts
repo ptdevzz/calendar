@@ -106,5 +106,20 @@ export const data = [
         status: 2
       }
     ]
+  },
+  {
+    date: '25-02-2025',
+    events: [
+      {
+        id: 9,
+        type: 'appointment',
+        title: 'Nghỉ lễ',
+        location: 'Văn phòng khách hàng',
+        time: '08:45',
+        description: 'Đánh giá tiến độ dự án',
+        recurrence: 'none',
+        status: 2
+      }
+    ]
   }
 ]
