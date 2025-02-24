@@ -163,6 +163,7 @@ function App() {
       if (ruleConfig.freq === RRule.MONTHLY) {
         ruleConfig.bymonthday = [dateCurr.date() === 1 ? -1 : dateCurr.date() - 1]
       }
+
       const rule = new RRule(ruleConfig)
 
       const allDates = rule.between(

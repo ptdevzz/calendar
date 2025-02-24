@@ -7,6 +7,8 @@ interface EventListProps {
 }
 
 const EventList = ({ event }: EventListProps) => {
+    console.log(event);
+    
     const today = dayjs().format("dddd, D MMM ")
     return <div className="bg-white shadow rounded-[4px] p-6">
         <div className="flex items-center justify-between">
@@ -17,7 +19,7 @@ const EventList = ({ event }: EventListProps) => {
         </div>
         <p className="font-medium text-xl text-secondary-title">{today}</p>
         <ul className="mt-6">
-            {event?.events?.map((e) => <EventItem type={e.status} key={e.id} event={e} />)}
+            {event?.events?.map((e) => <EventItem type={e.type === 'appointment' ? 1 : 2} key={e.id} event={e} />)}
         </ul>
     </div>
 }
